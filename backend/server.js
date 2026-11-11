@@ -12,6 +12,12 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Normalize duplicate slashes in URL (e.g. //api/auth -> /api/auth)
+app.use((req, res, next) => {
+  req.url = req.url.replace(/\/{2,}/g, '/');
+  next();
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/stocks', stockRoutes);
 

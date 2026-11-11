@@ -1,9 +1,12 @@
 import axios from 'axios';
 
 let rawBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-// Normalize URL: remove any trailing slashes
-rawBaseUrl = rawBaseUrl.trim().replace(/\/+$/, '');
-// Ensure it ends with /api if not already present
+rawBaseUrl = rawBaseUrl.trim();
+// Replace multiple consecutive slashes with single slash (preserving http:// or https://)
+rawBaseUrl = rawBaseUrl.replace(/([^:])\/{2,}/g, '$1/');
+// Remove trailing slashes
+rawBaseUrl = rawBaseUrl.replace(/\/+$/, '');
+// Ensure it ends with /api
 if (!rawBaseUrl.endsWith('/api')) {
   rawBaseUrl += '/api';
 }
