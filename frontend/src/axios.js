@@ -1,8 +1,16 @@
 import axios from 'axios';
 
+let rawBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Normalize URL: remove any trailing slashes
+rawBaseUrl = rawBaseUrl.trim().replace(/\/+$/, '');
+// Ensure it ends with /api if not already present
+if (!rawBaseUrl.endsWith('/api')) {
+  rawBaseUrl += '/api';
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
-  timeout: 30000
+  baseURL: rawBaseUrl,
+  timeout: 60000 // 60s timeout to allow Render free tier spin-up
 });
 
 api.interceptors.request.use(

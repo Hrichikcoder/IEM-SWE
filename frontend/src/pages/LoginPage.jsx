@@ -25,7 +25,15 @@ const LoginPage = () => {
       await login(email, password);
       navigate('/analyze');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else if (err.code === 'ECONNABORTED') {
+        setError('Connection timed out. If the backend on Render was sleeping, it may take 45-60s to wake up. Please try again.');
+      } else if (!err.response) {
+        setError('Cannot connect to backend server. Please verify your VITE_API_URL and ensure the Render backend service is running.');
+      } else {
+        setError('Login failed. Please check your credentials.');
+      }
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,5 @@
 const express = require('express');
-const mongoose =require('mongoose');
+const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -19,8 +19,23 @@ app.get('/', (req, res) => {
   res.send('Stock Analysis API is running...');
 });
 
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    uptime: process.uptime(),
+    dbState: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+  });
+});
+
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/stock_analysis_db";
+
+if (!process.env.MONGO_URI) {
+  console.warn("⚠️ [WARNING]: MONGO_URI environment variable is not defined! Using fallback: " + MONGO_URI);
+}
+if (!process.env.JWT_SECRET) {
+  console.warn("⚠️ [WARNING]: JWT_SECRET environment variable is not defined in process.env!");
+}
 
 mongoose.connect(MONGO_URI)
   .then(() => {
