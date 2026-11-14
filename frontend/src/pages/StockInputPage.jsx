@@ -332,16 +332,16 @@ const StockInputPage = () => {
 
         <hr className="section-divider" />
 
-        <div className="section-title">Stock Chart Upload & OCR (Optional)</div>
+        <div className="section-title">Stock Graph / Chart Upload & OCR (Optional)</div>
         <p style={{ color: '#64748b', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
-          Upload a chart image (PNG or JPG). Tesseract OCR will read data points and labels.
+          Upload a stock graph / chart screenshot (PNG or JPG). Tesseract OCR will read data points and labels.
         </p>
 
         {!imagePreview ? (
           <div className="upload-dropzone">
             <label htmlFor="chartUpload" style={{ cursor: 'pointer', display: 'block' }}>
               <div style={{ fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>
-                Click to choose stock chart image
+                Click to choose stock graph / chart image
               </div>
               <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
                 PNG, JPG or JPEG up to 5MB
@@ -358,7 +358,7 @@ const StockInputPage = () => {
         ) : (
           <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
             <div className="image-preview-wrapper">
-              <img src={imagePreview} alt="Stock chart preview" className="image-preview" />
+              <img src={imagePreview} alt="Stock graph preview" className="image-preview" />
               <button
                 type="button"
                 className="remove-img-btn"

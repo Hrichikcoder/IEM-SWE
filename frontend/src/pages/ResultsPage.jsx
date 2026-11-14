@@ -132,20 +132,20 @@ const ResultsPage = () => {
 
       {(previewUrl || (ocrOutput && ocrOutput.rawText)) && (
         <div className="analysis-card">
-          <h3>Uploaded Chart & OCR Result</h3>
+          <h3>Uploaded Stock Graph / Chart & OCR Result</h3>
           <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
             {previewUrl && (
               <div>
                 <img
                   src={previewUrl}
-                  alt="Stock chart"
+                  alt="Stock graph preview"
                   style={{ maxHeight: '180px', borderRadius: '6px', border: '1px solid #e2e8f0' }}
                 />
               </div>
             )}
             <div style={{ flex: 1, minWidth: '260px' }}>
               <div style={{ fontSize: '0.85rem', color: '#475569', marginBottom: '0.5rem' }}>
-                <strong>Extracted Text from Chart:</strong>
+                <strong>Extracted Text from Graph / Chart:</strong>
               </div>
               <div
                 style={{

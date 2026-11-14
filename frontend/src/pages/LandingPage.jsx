@@ -30,12 +30,39 @@ const LandingPage = () => {
     dividendYield: ''
   });
 
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+        setError('Only JPG, JPEG, and PNG files are allowed.');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Image file size must be less than 5MB.');
+        return;
+      }
+      setError('');
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+      setImagePreview(null);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -60,8 +87,16 @@ const LandingPage = () => {
         }
       });
 
-      const res = await api.post('/stocks/analyze', submitData);
-      navigate(`/results/${res.data._id}`, { state: { analysis: res.data } });
+      if (imageFile) {
+        submitData.append('image', imageFile);
+      }
+
+      const res = await api.post('/stocks/analyze', submitData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      navigate(`/results/${res.data._id}`, {
+        state: { analysis: res.data, previewUrl: imagePreview }
+      });
     } catch (err) {
       setError(err.response?.data?.message || 'Error analyzing stock. Please try again.');
     } finally {
@@ -273,7 +308,59 @@ const LandingPage = () => {
                 onChange={handleChange}
               />
             </div>
+
+            <div className="form-group">
+              <label>Dividend Yield (%)</label>
+              <input
+                name="dividendYield"
+                type="number"
+                step="any"
+                placeholder="e.g. 2.1"
+                value={formData.dividendYield}
+                onChange={handleChange}
+              />
+            </div>
           </div>
+
+          <hr className="section-divider" />
+
+          <div className="section-title">Stock Graph / Chart Upload & OCR (Optional)</div>
+          <p style={{ color: '#64748b', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
+            Upload a stock graph / chart screenshot (PNG or JPG). Tesseract OCR will read data points and labels.
+          </p>
+
+          {!imagePreview ? (
+            <div className="upload-dropzone">
+              <label htmlFor="landingChartUpload" style={{ cursor: 'pointer', display: 'block' }}>
+                <div style={{ fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>
+                  Click to choose stock graph / chart image
+                </div>
+                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                  PNG, JPG or JPEG up to 5MB
+                </div>
+              </label>
+              <input
+                id="landingChartUpload"
+                type="file"
+                accept="image/png, image/jpeg, image/jpg"
+                onChange={handleImageChange}
+                style={{ display: 'none' }}
+              />
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+              <div className="image-preview-wrapper">
+                <img src={imagePreview} alt="Stock graph preview" className="image-preview" />
+                <button
+                  type="button"
+                  className="remove-img-btn"
+                  onClick={handleRemoveImage}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          )}
 
           <button
             type="submit"
